@@ -1,11 +1,15 @@
 import React from 'react';
 import { GithubCommit } from '../../interfaces/github-commit.interface';
+import config from '../../config';
 
 type CommitListProps = {
   commits: GithubCommit[];
 }
 
 const CommitList: React.FC<CommitListProps> = ({ commits }) => {
+  const repositoryUrl = config.githubBaseUrl + '/' + config.githubOwner + '/' + config.githubRepositoryName;
+  const repositoryName = config.githubRepositoryName;
+  
   return (
     <ul className="relative border-l border-gray-200 dark:border-gray-700">
       {commits.map((commit) => (
@@ -31,8 +35,8 @@ const CommitList: React.FC<CommitListProps> = ({ commits }) => {
                 <span> has committed on</span>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {" "}
-                  <a href="https://github.com/Franccesco1907">
-                    Repository
+                  <a href={repositoryUrl}>
+                    {repositoryName}
                   </a>
                 </span>
               </div>
