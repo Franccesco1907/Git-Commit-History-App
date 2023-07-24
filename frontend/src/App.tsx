@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import axios from 'axios';
+import React, { useState } from 'react';
+import CommitList from './components/CommitList/CommitList';
+import Layout from './components/Layout/Layout';
+import Loader from './design-system/components/Loader/Loader';
+import SearchBar from './design-system/components/SearchBar/SearchBar';
+import './index.css';
+import { GithubCommit } from './interfaces/github-commit.interface';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [commits, setCommits] = useState<GithubCommit[]>([]);
+  const [loading, setLoading] = useState(false);
+
+
+  const handleSearch = async (query: string) => {
+    setLoading(true);
+
+    try {
+      const response = await axios.get<GithubCommit[]>(
+        `http://localhost:8080/commit`
+      );
+      console.log('response', response.data)
+      console.log('query', query)
+      setCommits(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Layout>
+      <div className="bg-white shadow">
+          <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl font-bold tracking-tight text-white-900">
+              Github Commit History
+            </h1>
+          </div>
+        </div>
+      <div className="mx-auto max-w-7xl py-6 px-8 sm:px-10 lg:px-12">
+        <SearchBar onSearch={handleSearch} />
+        {loading ? <Loader /> : <CommitList commits={commits} />}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </Layout>
+  );
+};
 
-export default App
+export default App;
