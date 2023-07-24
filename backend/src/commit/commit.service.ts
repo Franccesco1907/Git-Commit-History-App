@@ -10,20 +10,10 @@ export class CommitService {
     private readonly httpService: HttpService,
   ) { }
 
-  async getAll(): Promise<GithubCommit[]> {
+  async getCommits(query = ''): Promise<GithubCommit[]> {
     try {
       const { data } = await firstValueFrom(this.httpService.get(''));
-      return data;
-    } catch (error) {
-      console.error(`The following error has occurred: ${error}`);
-      throw new HttpException(`The commits could not be retrieved`, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async getByMessage(message): Promise<GithubCommit[]> {
-    try {
-      const { data } = await firstValueFrom(this.httpService.get(''));
-      return data.filter((commit) => commit.commit.message.match(message));
+      return data.filter((commit) => commit.commit.message.match(query));
     } catch (error) {
       console.error(`The following error has occurred: ${error}`);
       throw new HttpException(`The commits could not be retrieved`, HttpStatus.INTERNAL_SERVER_ERROR);
