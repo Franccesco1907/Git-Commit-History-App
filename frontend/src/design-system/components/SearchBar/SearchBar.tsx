@@ -17,6 +17,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     onSearch(query);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onSearch(query);
+    }
+  };
+
   return (
     <div className="relative mb-10">
       <input
@@ -25,6 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         placeholder="Search by commit message"
         className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         onChange={handleChange}
+        onKeyDown={handleKeyPress}
         name="message"
         value={query}
       ></input>
@@ -35,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       >
         <img
           className="h-6 w-6"
-          src={search_icon} alt="search_icon" 
+          src={search_icon} alt="search_icon"
         />
       </button>
     </div>
