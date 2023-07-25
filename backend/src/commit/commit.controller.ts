@@ -1,5 +1,5 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Query } from '@nestjs/common';
+import { ApiInternalServerErrorResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CommitService } from './commit.service';
 
 @ApiTags('commit')
@@ -11,8 +11,13 @@ export class CommitController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'The commits were retrieved.' })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'The commits could not be retrieved.' })
+  @ApiInternalServerErrorResponse({ description: 'Github API Server Error' })
   @ApiQuery({ name: 'query', required: false, type: String })
-  getCommits(@Query('query') query: string) {
-    return this.commitService.getCommits(query);
+  async getCommits(@Query('query') query: string) {
+    try {
+      return await this.commitService.getCommits(query);
+    } catch (error) {
+      throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
