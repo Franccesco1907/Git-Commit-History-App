@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+      target: development
+    command: pnpm run start:dev
+    env_file:
+      - ./backend/.env
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+  #     target: development
+  #   # command: pnpm run dev
+  #   env_file:
+  #     - ./frontend/.env
+  #   ports:
+  #     - '3000:3000'
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  frontend:
+    image: node:18-alpine
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - '3000:3000'
+
+#   sonarqube:
+#     image: sonarqube:latest
+#     ports:
+#       - '9000:9000'
+#       - '9092:9092'
+#     environment:
+#       - SONARQUBE_JDBC_URL=jdbc:postgresql://sonarqube-db:5432/sonarqube
+#       - SONAR_JDBC_USERNAME=sonarqube
+#       - SONAR_JDBC_PASSWORD=sonarqube
+#     networks:
+#       - sonarnet
+#     depends_on:
+#       - sonarqube-db
+
+#   sonarqube-db:
+#     image: postgres:latest
+#     environment:
+#       - POSTGRES_USER=sonarqube
+#       - POSTGRES_PASSWORD=sonarqube
+#       - POSTGRES_DB=sonarqube
+#     networks:
+#       - sonarnet
+
+# networks:
+#   sonarnet:
+#     driver: bridge
